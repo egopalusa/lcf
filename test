@@ -1,3 +1,5 @@
+
+
 Summarize all the inputs
 
 CSV  -> Product.ServiceName.csv
@@ -120,3 +122,99 @@ Steps:
 5) Load .ENV db params FOR ENV / SERVICES /PRODUCT at any level and check connectivity for inbound and outbound.
 6) Read CSV file data and create Test Factory.
 7) Get RunID
+
+
+
+{
+	"product": {
+		"name": "PEGA-WebServices",
+		"description": "???.",
+		"RunEnv": "OnPrem",
+		"maintainers": [
+			{
+				"name": "Chandra Sarikonda",
+				"email": "chandra.sarikonda@blueshieldca.com"
+			},
+			{
+				"name": "DevX Team",
+				"email": "devx-testautomationframework-fte@blueshieldca.com"
+			}
+		],
+		"BB": {
+			"url": "https://bitbucket.org/blueshieldca/shieldadvisorwebservices/src/master/"
+		},
+		"ConfluencePage": "https://docs.example.com/api",
+		"headers": {
+			"content_type": "application/json",
+			"accept": "application/json"
+		},
+		"environments": {
+			"testing": {
+					"database": {
+						"main": "FacetsTestDB",
+						"reporting": "MongoTestDB"
+					},
+					"settings": {
+						"base_url": "http://test.api.example.com",
+						"api_version": "v1",
+						"authentication": {
+							"x-ibm-client-id": "b105d15643dd496066c02098630956b0"
+							"x-ibm-client-secret": "90e9343d2a8283e3e34df90863d50173"
+						}					
+					},
+					"timeouts": {
+						"request_timeout": 3000,
+						"connection_timeout": 5000
+					},
+					"logging": {
+						"log_level": "INFO",
+						"report_format": "JSON"
+					},
+					"error_handling": {
+						"retry_policy": 3,
+						"fallback_url": "http://test.api.example.com/fallback"
+					},
+					"rate_limiting": 100,
+					"mock_data": "path/to/test/mock/data"
+				}
+			}
+		}
+	}
+}
+
+
+
+environments: 
+  qa: 
+    plan_selection:
+      path_to_json: "plan_selection_request.json"
+      request_type: "POST"
+      headers: 
+        x-ibm-client-id: 
+        x-ibm-client-secret: 
+        Content-Type: "application/json"
+      api_base_url: "https://cloud-api-dev.blueshieldca.com/apim-FADProviderMetaData-qa/FADProviderMetaData/api/fad/provider/metadataplans/v2"
+    type_head:
+      headers: 
+        x-ibm-client-id: 
+        x-ibm-client-secret: 
+        Content-Type: "application/json"
+      api_base_url: "https://i-dev.blueshieldca.com/apim-FADProviderSearch-qa/FADProviderSearch/api/fad/provider/typeahead/v1"
+    coverage_delegation:
+      path_to_json: "coverage_delegate_request.json"
+      request_type: "POST"
+      headers: 
+        x-ibm-client-id: ""
+        x-ibm-client-secret: ""
+        content-Type: "application/json"
+      api_base_url: "https://e/private/opstest/api/bsc/gateway/member/coverages/pcp/goi/delegation/rules/preference/v4"
+    db_credentials: 
+      facets: 
+        username: ${FACETS_USER}
+        password: ${FACETS_PASSWORD}
+        server: ${FACETS_SERVER}
+        port: ${FACETS_PORT}
+        dbname: ${FACETS_DB}
+        connection_string: 
+        dbsource: facets
+
