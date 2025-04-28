@@ -1,0 +1,122 @@
+Summarize all the inputs
+
+CSV  -> Product.ServiceName.csv
+
+
+1) ENV List
+	ENVLIST=DEV,TEST,STAGE,PROD
+	Domain=
+	TestType=smoke,ept,functional,regression
+	DB Connect string without password for each environment
+	DB password for each db / environment
+
+
+2) APPLIST
+	Domain=Digital
+		Product=FAD
+			APPLICATION=FAD
+				DEV_REPO:
+				TEST_REPO:
+				ServerAddress:
+				headerAuth:
+				DBSTRING
+					DEV:
+					TEST
+					STAGE
+					PROD
+			APPLICATION=MHR
+				DEV_REPO:
+				TEST_REPO:
+				ServerAddress:
+				headerAuth:
+				DBSTRING
+					DEV:
+					TEST
+					STAGE
+					PROD			
+	Domain=PEGA
+		Product=PEGA
+			APPLICATION=PEGA
+				DEV_REPO:
+				TEST_REPO:
+				ServerAddress:
+				headerAuth:
+				DBSTRING
+					DEV:
+					TEST
+					STAGE
+					PROD
+			APPLICATION=MHR
+				DEV_REPO:
+				TEST_REPO:
+				ServerAddress:
+				headerAuth:
+				DBSTRING
+					DEV:
+					TEST
+					STAGE
+					PROD			
+	Domain=EDI
+		Product=EDIRT
+			APPLICATION= EDI27X	
+				DEV_REPO:
+				TEST_REPO:
+				ServerAddress:
+				headerAuth:
+				DBSTRING
+					DEV:
+					TEST
+					STAGE
+					PROD
+		Product=EDIBATCH
+			APPLICATION= EDI834
+				DEV_REPO:
+				TEST_REPO:
+				ServerAddress:
+				headerAuth:
+				DBSTRING
+					DEV:
+					TEST
+					STAGE
+					PROD
+3) SETTINGS
+	Name product gets picked up from the APP List
+		Product=FAD
+			APPLICATION=FAD
+				SERVICES:
+				ServiceURL:
+				ServerAddress:
+				headerAuth:
+				env specific
+
+4)	TC CSV File
+	Product_APPLICATION_SERVICENAME_Smoke.csv
+	
+5) RUN ID
+    Global for the Domain
+	Functional for the 
+	System Generated for EACH Domain and testType.
+	
+6) Auth
+	a. Client Id/pwd
+	b. Cookie using username and password
+	c. OAuth
+	d. combinations
+	Consider login @ every test case and otherwise	
+
+Steps:
+1) Read CommandLine argument -> Get ENV, TestType, API, and Store in TitleParams. 
+    Load .env file and validate.
+	Remove settings.yaml from parameter, instead get product name.
+	check and confirm the given values are acceptable with little modification.
+	Get CSV File(s) for API. Multiple api with the same file? Consider adding Product as option.
+2) Search for CSV file headers.  Product_APPLICATION_SERVICENAME_<testType>.csv
+	if no multiple files with the same name, proceed.
+	If there are multiple files?
+3) Load CSV FILE -> Get Product,Application,servicename and Store in TitleParams. 
+4) Search and Get the file for Product_APPLICATION_SERVICENAME_settings.yaml
+	Get auth details.
+	Load all the values in TitleParams.
+5) Load .ENV db params FOR ENV / SERVICES /PRODUCT at any level and check connectivity for inbound and outbound.
+6) Read CSV file data and create Test Factory.
+7) Get RunID
