@@ -1,113 +1,58 @@
-{
-    "Portfolio": "Enterprise Digital Transformation",
-    "Application": "PEGA Claims Processing",
-    "product": {
-        "name": "PEGA-WebServices",
-        "description": "",
-        "RunEnv": "OnPrem",
-        "dependency_auth": {
-            "auth_pattern": "pega-authentication-pattern",
-            "payload": {
-                "userid": "${USERID}",
-                "password": "${PASSWORD}"
-            }
-			"credentials": {
-                "x-ibm-client-id": "${ENV_CLIENT_ID}",
-                "x-ibm-client-secret": "${ENV_CLIENT_SECRET}"
-            }
-        },
-		"api_headers": {
-            "static": {
-                "content_type": "application/json",
-                "accept": "application/json",
-                "Cookie": "session_id=abc123xyz"
-            },
-            "dynamic": {
-                "tag1": "${CUSTOM_GENERATE_SEQNUM}",
-                "tag2": "${CUSTOM_GENERATE_TIMESTAMP}"
-            }
-        },
-        "api_auth": {
-            "static": {
-                "content_type": "application/json",
-                "accept": "application/json",
-                "Cookie": "session_id=abc123xyz"
-            },
-            "dynamic": {
-                "tag1": "${CUSTOM_GENERATE_SEQNUM}",
-                "tag2": "${CUSTOM_GENERATE_TIMESTAMP}"
-            }
-        },
-        "database": {
-            "primary": "Facets",
-            "secondary": "SnowFlake"
-        },
-        "base_url": {
-            "Dev": "http://dev.api.example.com",
-            "Test": "http://test.api.example.com",
-            "Stage": "http://stage.api.example.com"
-        },
-      },
-    "reporting": {
-        "maintainers": [
-            {
-                "name": "Chandra Sarikonda",
-                "email": "chandra.sarikonda@blueshieldca.com"
-            },
-            {
-                "name": "DevX Team",
-                "email": "devx-testautomationframework-fte@blueshieldca.com"
-            }
-        ],
-        "BB": {
-            "url": "https://bitbucket.org/blueshieldca/shieldadvisorwebservices/src/master/"
-        },
-        "ConfluencePage": "https://docs.example.com/api",
-    }
-}
 
-
-Service JSON
-
-{
-    "product": "PEGA-WebServices",
-    "Feature": "PEGA-WebServices",
-    "service": {
-        "api_name": "/ServiceName",
-        "api_shortName": "",
-        "api_URL": "",
-        "api_UrlPath": "",
-        "api_RequestType": "",
-        "api_version": "v1",
-        "api_Json": "jsonfilename",
-        "api_data_payloads": {
-            "memberid": {
-                "path": "jmep path",
-                "default": "value",
-                "feature": "HMOMember"
-            },
-            "DOB": {
-                "path": "jmep path",
-                "default": "value",
-                "feature": "DOBAll"
-            }
-        },
-        "data_response": {
-            "MemberName": {
-                "path": "jmep path"
-            },
-            "Age": {
-                "path": "jmep path"
-            }
-        },
-        "api_performance": {
-            "api_responseTimeSLA": "2000",
-            "api_volumePerHour": ""
-        },
-        "api_repo": {
-			"ConfluencePage": "https://docs.example.com/api",
-            "BitBucketRepo": "https://bitbucket.org/blueshieldca/shieldadvisorwebservices/src/master/",
-            "TestRepo": "https://testrepo.example.com/project"
+def create_db_connection(db='facetsdb', env='test'):
+    print(f"Starting database connection setup for {db.upper()} in {env.upper()} environment")
+    
+    # Construct key names
+    url_key = f"{db.upper()}_{env.upper()}_DB_URL"
+    pwd_key = f"{db.upper()}_{env.upper()}_DB_USERPWD"
+    print(f"Constructed keys - URL: {url_key}, Password: {pwd_key}")
+    
+    try:
+        # Load YAML config file
+        print("Loading db_config.yaml file...")
+        with open('db_config.yaml', 'r') as file:
+            db_config = yaml.safe_load(file)
+            db_url = db_config[db][url_key]
+            print(f"Found DB URL: {db_url}")
+    except Exception as e:
+        print(f"Error reading db_config.yaml: {str(e)}")
+        return None
+    
+    try:
+        # Load .envpwd file
+        print("Loading .envpwd file...")
+        load_dotenv('envpwd')  # Load environment variables from file
+        db_userpwd = os.getenv(pwd_key)
+        if not db_userpwd:
+            raise ValueError(f"Password not found for key {pwd_key}")
+        print("Password retrieved successfully (masked for security)")
+    except Exception as e:
+        print(f"Error reading .envpwd file: {str(e)}")
+        return None
+    
+    try:
+        # Split username and password
+        username, password = db_userpwd.split('/')
+        print(f"Extracted username: {username}")
+        
+        # Simulate database connection
+        print(f"Attempting to connect to {db_url} with username {username}...")
+        # Here you would put your actual connection code
+        # connection = create_actual_connection(db_url, username, password)
+        
+        print("Connection established successfully!")
+        return {
+            'status': 'success',
+            'db_url': db_url,
+            'username': username,
+            'password': '********'  # Masked for security
         }
-    }
-}
+    except Exception as e:
+        print(f"Connection failed: {str(e)}")
+        return None
+
+# Example usage
+if __name__ == "__main__":
+    connection = create_db_connection(db='facetsdb', env='test')
+    print("\nFinal connection details:")
+    print(connection)
